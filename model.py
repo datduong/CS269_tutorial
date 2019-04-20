@@ -39,10 +39,12 @@ class Function_XY (nn.Module):
   def __init__(self,num_of_labels): 
     super ( Function_XY, self).__init__()
     self.num_of_labels = num_of_labels
-  def forward_xy( self,input,label,do_print=False): 
+  def forward_xy( self,input,label,w_vec,do_print=False): 
     # @input is batch num_sample x num_feature 
     # @label is num_sample x num_feature 
-    phi = torch.sum( input * label, dim=1 )
+    # phi = torch.sum( input * label, dim=1 )
+    pointwise_xy = input * label
+    phi = pointwise_xy @ w_vec ## the @ symbol is matrix multiply
     if do_print:
       print ('\nlabel is')
       print (label)
@@ -61,6 +63,9 @@ fx = Feature_Layer (num_of_feature,final_layer_dim)
 phi_xy = Function_XY (num_of_labels)
 
 ## apply to data 
+
+w_vec = torch.ones(num_of_labels,1) ## vector w in perceptron algorithm 
+
 batch_size = 8
 x = torch.randn(batch_size,num_of_feature) ## 16 random samples in 1 batch ... so to speak.
 new_x = fx.forward_x(x) ## pass @x into neural network 
@@ -74,7 +79,9 @@ optimizer = optim.SGD([guess_label], lr = 0.01, momentum=0.9) ## tell the @optim
 for i in range(50): ## do 50 iterations 
   print ('\niteration {}'.format(i))
   optimizer.zero_grad() ## set all gradient to be zero, otherwise, gradient will get larger for each iteration. 
-  function_value = -1* phi_xy.forward_xy(new_x, guess_label,do_print=True) ## notice takes -1 multiplication 
+  ## notice takes -1 multiplication below, because @optim is doing minimization by default
+  ## min -k(x) is same as doing max k(x)
+  function_value = -1* phi_xy.forward_xy(new_x, guess_label, w_vec, do_print=True) 
   ## using .sum() sometimes break the computation graph
   function_value = function_value.sum() ## add all the function value over all batch
   function_value.backward(retain_graph=True) ## without retain_graph=True, you will see error 
