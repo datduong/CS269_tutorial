@@ -73,8 +73,18 @@ new_x = fx.forward_x(x) ## pass @x into neural network
 init_y = torch.zeros ( batch_size,num_of_labels) + 0.5 ## initial guess 
 
 guess_label = Variable( init_y , requires_grad=True ) ## use @Variable, start at some feasible point
-optimizer = optim.SGD([guess_label], lr = 0.01, momentum=0.9) ## tell the @optim to only optimize @guess_label 
 
+## what is this @guess_label
+print (guess_label)
+print (guess_label.data) ## the numerical values 
+print (guess_label.requires_grad) ## saying that this is a "math-variable with derivitive"
+print (guess_label.grad) ## we have not done any optmization so there's no gradient yet. 
+
+## to change the numerical field of @guess_label, you muse use guess_label.data
+# guess_label[guess_label >1] = 1 ## see error 
+
+
+optimizer = optim.SGD([guess_label], lr = 0.01, momentum=0.9) ## tell the @optim to only optimize @guess_label 
 
 for i in range(50): ## do 50 iterations 
   print ('\niteration {}'.format(i))
@@ -89,5 +99,13 @@ for i in range(50): ## do 50 iterations
   ## notice, output must be bounded between [0,1] so we have to project back to this space [0,1]
   guess_label.data [guess_label.data >1] = 1 # must use ".data" to access the "data" inside the @guess_label 
   guess_label.data [guess_label.data <0] = 0
+  ## instead of the above, what happen if you do this?? 
+  # guess_label[guess_label >1] = 1
+  # ## see error 
+  # Traceback (most recent call last):
+  #   File "<stdin>", line 1, in <module>
+  # RuntimeError: a leaf Variable that requires grad has been used in an in-place operation.
+
+
 
 
