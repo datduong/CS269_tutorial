@@ -93,7 +93,7 @@ print (guess_label.is_leaf) ## see this tutorial https://www.youtube.com/watch?v
 ## to change the numerical field of @guess_label, you muse use guess_label.data
 # guess_label[guess_label >1] = 1 ## see error 
 # however, this is okay 
-# guess_label.data[guess_label.data >1] = 1 ## see error 
+# guess_label.data[guess_label.data >1] = 1 ## works fine  
 
 
 optimizer = optim.SGD([guess_label], lr = 0.01, momentum=0.9) ## tell the @optim to only optimize @guess_label 
