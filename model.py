@@ -46,10 +46,9 @@ class Function_XY (nn.Module):
     pointwise_xy = input * label
     phi = pointwise_xy @ w_vec ## the @ symbol is matrix multiply
     if do_print:
-      print ('\nlabel is')
-      print (label)
-      print ('function value is')
-      print (phi)
+      # print ('\nlabel is')
+      # print (label)
+      print ('function value is {}'.format(-1*phi.sum()))
     return phi
 
 
@@ -96,8 +95,8 @@ print (guess_label.is_leaf) ## see this tutorial https://www.youtube.com/watch?v
 # guess_label.data[guess_label.data >1] = 1 ## works fine  
 
 
-optimizer = optim.SGD([guess_label], lr = 0.01, momentum=0.9) ## tell the @optim to only optimize @guess_label 
-for i in range(50): ## do 50 iterations 
+optimizer = optim.SGD([guess_label], lr = 20, momentum=0.9) ## tell the @optim to only optimize @guess_label 
+for i in range(20): ## do 50 iterations 
   print ('\niteration {}'.format(i))
   optimizer.zero_grad() ## set all gradient to be zero, otherwise, gradient will get larger for each iteration. 
   ## notice takes -1 multiplication below, because @optim is doing minimization by default
