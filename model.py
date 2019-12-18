@@ -58,36 +58,37 @@ num_of_feature = 100
 final_layer_dim = num_of_labels ## must match @num_of_labels
 
 ## define the neural network functions 
-fx = Feature_Layer (num_of_feature,final_layer_dim)
-phi_xy = Function_XY (num_of_labels)
+fx = Feature_Layer (num_of_feature,final_layer_dim).cuda()
+phi_xy = Function_XY (num_of_labels).cuda()
 
 ## apply to data 
 
-w_vec = torch.ones(num_of_labels,1) ## vector w in perceptron algorithm 
+w_vec = torch.ones(num_of_labels,1).cuda() ## vector w in perceptron algorithm 
 
 batch_size = 8
-x = torch.randn(batch_size,num_of_feature) ## 16 random samples in 1 batch ... so to speak.
+x = torch.randn(batch_size,num_of_feature).cuda() ## 16 random samples in 1 batch ... so to speak.
 
 ## notice, the same input to @fx will give different output because of dropout in the network 
-fx.forward_x(x)
-fx.forward_x(x) ## different 
+# fx.forward_x(x)
+# fx.forward_x(x) ## different 
 
-
-fx.eval() ## this will disable dropout 
-fx.forward_x(x) 
-fx.forward_x(x) ## same 
+# fx.eval() ## this will disable dropout 
+# fx.forward_x(x) 
+# fx.forward_x(x) ## same 
 new_x = fx.forward_x(x) ## pass @x into neural network 
 
 init_y = torch.zeros ( batch_size,num_of_labels) + 0.5 ## initial guess 
 
-guess_label = Variable( init_y , requires_grad=True ) ## use @Variable, start at some feasible point
+# guess_label = Variable( init_y , requires_grad=True ) ## use @Variable, start at some feasible point
+guess_label = torch.rand([8,5], requires_grad=True, device="cuda")
+
 
 ## what is this @guess_label
-print (guess_label)
-print (guess_label.data) ## the numerical values 
-print (guess_label.requires_grad) ## saying that this is a "math-variable with derivitive"
-print (guess_label.grad) ## we have not done any optmization so there's no gradient yet. 
-print (guess_label.is_leaf) ## see this tutorial https://www.youtube.com/watch?v=MswxJw-8PvE
+# print (guess_label)
+# print (guess_label.data) ## the numerical values 
+# print (guess_label.requires_grad) ## saying that this is a "math-variable with derivitive"
+# print (guess_label.grad) ## we have not done any optmization so there's no gradient yet. 
+# print (guess_label.is_leaf) ## see this tutorial https://www.youtube.com/watch?v=MswxJw-8PvE
 
 ## to change the numerical field of @guess_label, you muse use guess_label.data
 # guess_label[guess_label >1] = 1 ## see error 
@@ -117,7 +118,7 @@ for i in range(20): ## do 50 iterations
   # RuntimeError: a leaf Variable that requires grad has been used in an in-place operation.
 
 
-
+exit() 
 """ version below do not use retain_graph=True """ 
 
 
