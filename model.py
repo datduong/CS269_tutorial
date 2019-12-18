@@ -15,6 +15,7 @@ import torch.nn.functional as F
 from torch.nn.utils.rnn import pack_padded_sequence, pad_packed_sequence
 from torch.nn.init import xavier_uniform_
 
+from tqdm import tqdm
 
 class Feature_Layer (nn.Module): 
   def __init__(self,num_of_feature,final_layer_dim,drop_out=0.1): 
@@ -97,7 +98,7 @@ guess_label = torch.rand([8,5], requires_grad=True, device="cuda")
 
 
 optimizer = optim.SGD([guess_label], lr = 20, momentum=0.9) ## tell the @optim to only optimize @guess_label 
-for i in range(20): ## do 50 iterations 
+for i in tqdm ( range(20) ): ## do 50 iterations 
   print ('\niteration {}'.format(i))
   optimizer.zero_grad() ## set all gradient to be zero, otherwise, gradient will get larger for each iteration. 
   ## notice takes -1 multiplication below, because @optim is doing minimization by default
